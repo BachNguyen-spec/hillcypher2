@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Import/Export CSV - Hill Cipher{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-file-upload"></i> Mã hóa hàng loạt (Import CSV bản rõ)</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/bulk_encrypt" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">File CSV</label>
+                                <input type="file" class="form-control" name="plaintext_file" accept=".csv" required>
+                                <small class="text-muted">Định dạng header bắt buộc: <code>name,email,phone</code></small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Ma trận Khóa K (3x3)</label>
+                                <textarea class="form-control" name="key_matrix" rows="3" placeholder="1 2 3&#10;4 5 6&#10;7 8 9" required></textarea>
+                                <small class="text-muted">Tất cả các dòng sẽ được mã hóa bằng ma trận này.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-file-export"></i> Tạo file CSV đã mã hóa
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-file-download"></i> Giải mã hàng loạt (Import CSV bản mã)</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/bulk_decrypt" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">File CSV</label>
+                                <input type="file" class="form-control" name="cipher_file" accept=".csv" required>
+                                <small class="text-muted">Định dạng header bắt buộc: <code>encrypted_data</code></small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Ma trận Khóa nghịch đảo K⁻¹ (3x3)</label>
+                                <textarea class="form-control" name="key_inverse" rows="3" placeholder="177 18 5&#10;20 186 197&#10;196 4 1" required></textarea>
+                                <small class="text-muted">Phải trùng với ma trận nghịch đảo của file mã hóa.</small>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-file-import"></i> Tạo file CSV đã giải mã
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Hướng dẫn CSV</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6><strong>File nhập để mã hóa</strong></h6>
+                        <pre class="bg-light p-3 rounded small mb-0">name,email,phone
+Nguyen Van A,nguyenvana@example.com,0909123456
+Tran Thi B,tranthib@example.com,0911222333</pre>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><strong>File nhập để giải mã</strong></h6>
+                        <pre class="bg-light p-3 rounded small mb-0">encrypted_data
+OPQXYZ...
+ABCDEF...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

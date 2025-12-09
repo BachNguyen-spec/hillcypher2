@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-user-shield"></i> Mã hóa Thông tin Khách hàng</h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="/encrypt_customer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Thông tin Khách hàng</h5>
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Tên khách hàng</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Số điện thoại</label>
+                                <input type="text" class="form-control" id="phone" name="phone" required>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Ma trận Khóa K (3x3)</h5>
+                            
+                            <div class="mb-3">
+                                <label for="key_matrix" class="form-label">
+                                    Nhập ma trận khóa (ví dụ: 1 2 3; 4 5 6; 7 8 9)
+                                </label>
+                                <textarea class="form-control" id="key_matrix" name="key_matrix" rows="3" 
+                                    placeholder="1 2 3&#10;4 5 6&#10;7 8 9" required></textarea>
+                                <small class="form-text text-muted">
+                                    Mỗi hàng trên một dòng, các số cách nhau bằng khoảng trắng hoặc dấu phẩy
+                                </small>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> 
+                                <strong>Lưu ý:</strong> Ma trận khóa phải khả nghịch modulo {{ alphabet_size }}. 
+                                gcd(det(K), {{ alphabet_size }}) phải bằng 1.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-lock"></i> Mã hóa và Lưu
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if encrypted_data %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-check-circle"></i> Kết quả Mã hóa</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="result-box">
+                            <h6><strong>Customer ID:</strong></h6>
+                            <p class="mb-0">{{ customer_id }}</p>
+                        </div>
+                        
+                        <div class="result-box">
+                            <h6><strong>Bản Rõ:</strong></h6>
+                            <p class="mb-0">{{ plaintext }}</p>
+                        </div>
+                        
+                        <div class="result-box">
+                            <h6><strong>Ma trận Khóa K:</strong></h6>
+                            <pre class="mb-0">{{ key_matrix }}</pre>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="result-box">
+                            <h6><strong>Bản Mã (Đã lưu vào CSDL):</strong></h6>
+                            <p class="mb-0 font-monospace">{{ encrypted_data }}</p>
+                        </div>
+                        
+                        <div class="result-box">
+                            <h6><strong>Ma trận Khóa Nghịch đảo K⁻¹:</strong></h6>
+                            <pre class="mb-0">{{ key_inverse }}</pre>
+                            <small class="text-muted">Lưu lại ma trận này để giải mã sau này!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-question-circle"></i> Hướng dẫn</h5>
+            </div>
+            <div class="card-body">
+                <ul>
+                    <li>Nhập đầy đủ thông tin khách hàng (Tên, Email, SĐT)</li>
+                    <li>Nhập ma trận khóa K kích thước 3x3. Ví dụ: <code>1 2 3; 4 5 6; 7 8 9</code></li>
+                    <li>Ma trận khóa phải khả nghịch modulo {{ alphabet_size }} (gcd(det(K), {{ alphabet_size }}) = 1)</li>
+                    <li>Sau khi mã hóa thành công, hệ thống sẽ lưu bản mã vào CSDL và hiển thị ma trận khóa nghịch đảo K⁻¹</li>
+                    <li>Lưu lại ma trận K⁻¹ để giải mã dữ liệu sau này</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

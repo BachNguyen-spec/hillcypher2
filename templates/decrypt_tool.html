@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Công cụ Mã hóa/Giải mã - Hill Cipher{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-key"></i> Công cụ Mã hóa/Giải mã Text Lớn</h3>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="encrypt-tab" data-bs-toggle="tab" data-bs-target="#encrypt" type="button">
+                            <i class="fas fa-lock"></i> Mã hóa
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="decrypt-tab" data-bs-toggle="tab" data-bs-target="#decrypt" type="button">
+                            <i class="fas fa-unlock"></i> Giải mã
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content mt-4" id="myTabContent">
+                    <!-- Tab Mã hóa -->
+                    <div class="tab-pane fade show active" id="encrypt" role="tabpanel">
+                        <form method="POST" action="/encrypt_text">
+                            <div class="mb-3">
+                                <label for="plaintext" class="form-label">Bản Rõ</label>
+                                <textarea class="form-control" id="plaintext" name="plaintext" rows="5" 
+                                    placeholder="Nhập văn bản cần mã hóa (hỗ trợ tiếng Việt có dấu, số, dấu cách, dấu câu)..." required>{% if plaintext %}{{ plaintext }}{% endif %}</textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="key_matrix" class="form-label">Ma trận Khóa K (3x3)</label>
+                                <textarea class="form-control" id="key_matrix" name="key_matrix" rows="3" 
+                                    placeholder="1 2 3&#10;4 5 6&#10;7 8 9" required>{% if key_matrix %}{{ key_matrix }}{% endif %}</textarea>
+                                <small class="form-text text-muted">
+                                    Mỗi hàng trên một dòng, các số cách nhau bằng khoảng trắng
+                                </small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-lock"></i> Mã hóa
+                            </button>
+                        </form>
+                        
+                        {% if encrypted_data %}
+                        <div class="result-box mt-4">
+                            <h6><strong>Bản Mã:</strong></h6>
+                            <p class="mb-2 font-monospace">{{ encrypted_data }}</p>
+                            
+                            <h6 class="mt-3"><strong>Ma trận Khóa Nghịch đảo K⁻¹:</strong></h6>
+                            <pre class="mb-2">{{ key_inverse }}</pre>
+                            <small class="text-muted">Sử dụng ma trận này để giải mã bản mã trên</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Tab Giải mã -->
+                    <div class="tab-pane fade" id="decrypt" role="tabpanel">
+                        <form method="POST" action="/decrypt_text">
+                            <div class="mb-3">
+                                <label for="ciphertext" class="form-label">Bản Mã</label>
+                                <textarea class="form-control" id="ciphertext" name="ciphertext" rows="5" 
+                                    placeholder="Nhập bản mã cần giải mã..." required>{% if ciphertext %}{{ ciphertext }}{% endif %}</textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="key_inverse" class="form-label">Ma trận Khóa Nghịch đảo K⁻¹ (3x3)</label>
+                                <textarea class="form-control" id="key_inverse" name="key_inverse" rows="3" 
+                                    placeholder="Nhập ma trận K⁻¹ (ví dụ: 1 2 3; 4 5 6; 7 8 9)" required>{% if key_inverse %}{{ key_inverse }}{% endif %}</textarea>
+                                <small class="form-text text-muted">
+                                    Ma trận này được cung cấp khi bạn mã hóa văn bản
+                                </small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-unlock"></i> Giải mã
+                            </button>
+                        </form>
+                        
+                        {% if decrypted_data %}
+                        <div class="result-box mt-4">
+                            <h6><strong>Bản Giải Mã:</strong></h6>
+                            <p class="mb-0">{{ decrypted_data }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Thông tin Alphabet</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Kích thước Alphabet (Modulo m):</strong> {{ alphabet_size }}</p>
+                <p><strong>Alphabet bao gồm:</strong></p>
+                <ul>
+                    <li>Chữ cái tiếng Anh (A-Z, a-z)</li>
+                    <li>Chữ cái tiếng Việt có dấu (ÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴ và chữ thường tương ứng)</li>
+                    <li>Số (0-9)</li>
+                    <li>Dấu cách và dấu câu cơ bản (.,:;?!)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
